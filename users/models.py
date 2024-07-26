@@ -32,7 +32,7 @@ class UserManager(BaseUserManager):
     def create_user(
         self,
         email: str,
-        password: str=None,
+        password: str = None,
         **extra_fields
     ) -> "User":
         """Create and save a regular User with the given email and password."""
@@ -41,8 +41,7 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
     def create_superuser(
-        self,
-        email: str,
+        self, email: str,
         password: str,
         **extra_fields
     ) -> "User":
@@ -58,20 +57,19 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
+def create_custom_path_for_photo(instance: User, filename: str) -> str:
+    _, extension = os.path.splitext(filename)
+    return f"users-photos/{instance.email}/{extension}-{uuid.uuid4()}"
+
+
 class User(AbstractUser):
     """
     Custom User model that uses email as the username.
     """
-    @staticmethod
-    def create_custom_path_for_photo(instance: User, filename: str) -> str:
-        _, extension = os.path.splitext(filename)
-        return f"users-photos/{instance.email}/{extension}-{uuid.uuid4()}"
 
     # Remove the username field and use email as the username.
     username = models.CharField(
-        _("username"),
-        max_length=150,
-        blank=True, null=True
+        _("username"), max_length=150, blank=True, null=True
     )
 
     # Add an email field with a unique constraint.
@@ -85,9 +83,7 @@ class User(AbstractUser):
     objects = UserManager()
 
     photo = models.ImageField(
-        upload_to=create_custom_path_for_photo,
-        null=True,
-        blank=True
+        upload_to=create_custom_path_for_photo, null=True, blank=True
     )
 
     def clean(self):
