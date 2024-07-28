@@ -30,15 +30,15 @@ urlpatterns = [
     path(
         "api/v1/token/",
         TokenObtainPairView.as_view(),
-        name="token_obtain_pair"
+        name="token_obtain_pair",
     ),
     path(
         "api/v1/token/refresh/",
         TokenRefreshView.as_view(),
-        name="token_refresh"
+        name="token_refresh",
     ),
     path(
         "api/v1/token/verify/", TokenVerifyView.as_view(), name="token_verify"
     ),
-    path("api/v1/token/logout/", LogoutView.as_view(), name="token_logout")
+    path("api/v1/token/logout/", LogoutView.as_view(), name="token_logout"),
 ] + debug_toolbar_urls()
