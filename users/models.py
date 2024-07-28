@@ -67,13 +67,6 @@ class ResidencePlace(models.Model):
         null=True,
         blank=True,
     )
-    city = models.CharField(
-        max_length=100,
-        null=True,
-        blank=True,
-        db_comment="Name of the user's city of residence. Not required.",
-        help_text="Name of the user's city of residence. Not required.",
-    )
     code_country = models.CharField(
         max_length=2,
         null=True,
@@ -96,14 +89,12 @@ class ResidencePlace(models.Model):
         super().delete(*args, **kwargs)
 
     def __str__(self):
-        if self.country and self.city:
-            return f"{self.country} ({self.code_country}), {self.city}"
         return f"{self.country} ({self.code_country})"
 
     class Meta:
-        ordering = ["country", "city"]
+        ordering = ["country"]
         indexes = [
-            models.Index(fields=["country", "city"]),
+            models.Index(fields=["country", "code_country"]),
         ]
 
 
