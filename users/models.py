@@ -3,6 +3,7 @@ from __future__ import annotations
 import os.path
 import uuid
 
+import pycountry
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -41,7 +42,8 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
     def create_superuser(
-        self, email: str,
+        self,
+        email: str,
         password: str,
         **extra_fields
     ) -> "User":
@@ -55,6 +57,54 @@ class UserManager(BaseUserManager):
             raise ValueError("Superuser must have is_superuser=True.")
 
         return self._create_user(email, password, **extra_fields)
+
+
+class ResidencePlace(models.Model):
+    country = models.CharField(
+        max_length=100,
+        db_comment="Name of the user's country of residence. Not required.",
+        help_text="Name of the user's country of residence. Not required.",
+        null=True,
+        blank=True,
+    )
+    city = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+        db_comment="Name of the user's city of residence. Not required.",
+        help_text="Name of the user's city of residence. Not required.",
+    )
+    code_country = models.CharField(
+        max_length=2,
+        null=True,
+        blank=True,
+        db_comment="Country and territory codes (ISO 3166-1).",
+    )
+
+    def clean(self):
+        if pycountry.countries.get(name=self.country) is None:
+            raise ValueError("Country not found")
+        if pycountry.countries.get(name=self.country):
+            code_country = pycountry.countries.get(
+                name=self.country
+            )["alpha_2"]
+            self.code_country = code_country
+
+    def delete(self, *args, **kwargs):
+        if self.user_set.count() > 0:
+            raise ValueError("Cannot delete a country with users")
+        super().delete(*args, **kwargs)
+
+    def __str__(self):
+        if self.country and self.city:
+            return f"{self.country} ({self.code_country}), {self.city}"
+        return f"{self.country} ({self.code_country})"
+
+    class Meta:
+        ordering = ["country", "city"]
+        indexes = [
+            models.Index(fields=["country", "city"]),
+        ]
 
 
 def create_custom_path_for_photo(instance: User, filename: str) -> str:
@@ -83,7 +133,20 @@ class User(AbstractUser):
     objects = UserManager()
 
     photo = models.ImageField(
-        upload_to=create_custom_path_for_photo, null=True, blank=True
+        upload_to=create_custom_path_for_photo,
+        null=True,
+        blank=True,
+        db_comment="Photo of the user.",
+        help_text="Photo of the user.",
+    )
+
+    residence_place = models.ForeignKey(
+        ResidencePlace,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        db_comment="Residence place of the user.",
+        help_text="Residence place of the user.",
     )
 
     def clean(self):
@@ -94,6 +157,12 @@ class User(AbstractUser):
                     f"Photo size should be less than "
                     f"{max_image_size / 1024 / 1024}MB"
                 )
+
+    class Meta:
+        ordering = ["email", "username"]
+        indexes = [
+            models.Index(fields=["username", "first_name", "last_name"]),
+        ]
 
     def __str__(self):
         """String representation of the User model."""
