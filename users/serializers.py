@@ -55,3 +55,18 @@ class UserSerializer(serializers.ModelSerializer):
                 }
             }
         }
+
+
+class UserListSerializer(serializers.ModelSerializer):
+    """User model list serializer."""
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "email",
+            "username",
+            "first_name",
+            "last_name",
+            "residence_place"
+        ]
