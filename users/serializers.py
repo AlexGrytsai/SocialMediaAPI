@@ -10,9 +10,9 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             "id",
-            "username",
             "email",
             "password",
+            "username",
             "is_staff",
             "first_name",
             "last_name"
@@ -28,14 +28,21 @@ class UserSerializer(serializers.ModelSerializer):
             },
             "username": {
                 "required": False,
-                "style": {"input_type": "text", "placeholder": "Username"},
+                "style": {
+                    "input_type": "text", "placeholder": "Username (optional)"
+                },
             },
             "first_name": {
                 "required": False,
-                "style": {"input_type": "text", "placeholder": "First Name"}
+                "style": {
+                    "input_type": "text",
+                    "placeholder": "First Name (optional)"
+                }
             },
             "last_name": {
                 "required": False,
-                "style": {"input_type": "text", "placeholder": "Last Name"}
+                "style": {
+                    "input_type": "text", "placeholder": "Last Name (optional)"
+                }
             }
         }
