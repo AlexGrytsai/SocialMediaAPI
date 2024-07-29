@@ -5,7 +5,7 @@ from rest_framework.reverse import reverse
 
 from users.models import User
 from users.serializers import UserCreateSerializer, UserListSerializer, \
-    UserDetailSerializer, UserUpdateAddSerializer
+    UserDetailSerializer, UserUpdateSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -20,6 +20,8 @@ class UserViewSet(viewsets.ModelViewSet):
             return UserListSerializer
         if self.action == "retrieve":
             return UserDetailSerializer
+        if self.action in ("update", "partial_update"):
+            return UserUpdateSerializer
         return UserCreateSerializer
 
     def get_permissions(self):
@@ -55,4 +57,4 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
     def get_serializer_class(self):
         if self.request.method == "GET":
             return UserDetailSerializer
-        return UserUpdateAddSerializer
+        return UserUpdateSerializer
