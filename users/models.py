@@ -110,7 +110,7 @@ class User(AbstractUser):
 
     # Remove the username field and use email as the username.
     username = models.CharField(
-        _("username"), max_length=150, blank=True, null=True
+        _("username"), max_length=150, blank=True, null=True, unique=True
     )
 
     # Add an email field with a unique constraint.
@@ -152,7 +152,8 @@ class User(AbstractUser):
     class Meta:
         ordering = ["email", "username"]
         indexes = [
-            models.Index(fields=["username", "first_name", "last_name"]),
+            models.Index(fields=["username"]),
+            models.Index(fields=["last_name", "first_name"]),
         ]
 
     def __str__(self):
