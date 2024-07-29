@@ -105,8 +105,8 @@ class UserDetailSerializer(serializers.ModelSerializer):
         ]
 
 
-class UserUpdateAddSerializer(UserCreateSerializer):
-    """User model serializer for updating and adding with staff permissions."""
+class UserUpdateSerializer(UserCreateSerializer):
+    """User model serializer for updating a user."""
 
     class Meta(UserCreateSerializer.Meta):
         fields = UserCreateSerializer.Meta.fields.copy()
