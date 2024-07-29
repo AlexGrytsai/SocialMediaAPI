@@ -2,7 +2,8 @@ from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 
 from users.models import User
-from users.serializers import UserSerializer, UserListSerializer
+from users.serializers import UserSerializer, UserListSerializer, \
+    UserDetailSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -15,6 +16,8 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == "list":
             return UserListSerializer
+        if self.action == "retrieve":
+            return UserDetailSerializer
         return UserSerializer
 
 

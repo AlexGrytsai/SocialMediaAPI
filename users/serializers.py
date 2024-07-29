@@ -70,3 +70,21 @@ class UserListSerializer(serializers.ModelSerializer):
             "last_name",
             "residence_place"
         ]
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    """User model detail serializer."""
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "email",
+            "username",
+            "first_name",
+            "last_name",
+            "residence_place",
+            "photo",
+            "followers",
+            "my_subscriptions",
+        ]
