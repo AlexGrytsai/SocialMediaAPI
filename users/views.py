@@ -10,6 +10,7 @@ class UserViewSet(viewsets.ModelViewSet):
     API endpoint that allows users to be viewed or edited.
     """
     queryset = User.objects.all()
+    permission_classes = [IsAuthenticated,]
 
     def get_serializer_class(self):
         if self.action == "list":
