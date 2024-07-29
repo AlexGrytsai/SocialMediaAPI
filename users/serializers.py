@@ -21,13 +21,12 @@ class UserCreateSerializer(serializers.ModelSerializer):
             "email",
             "password",
             "username",
-            "is_staff",
             "first_name",
             "last_name",
+            "birth_date",
             "photo",
             "residence_place",
         ]
-        read_only_fields = ["is_staff"]
         extra_kwargs = {
             "password": {
                 "write_only": True,
@@ -53,6 +52,13 @@ class UserCreateSerializer(serializers.ModelSerializer):
                 "required": False,
                 "style": {
                     "input_type": "text", "placeholder": "Last Name (optional)"
+                }
+            },
+            "birth_date": {
+                "required": False,
+                "style": {
+                    "input_type": "date",
+                    "placeholder": "Birth date (optional)"
                 }
             },
             "photo": {
@@ -92,3 +98,11 @@ class UserDetailSerializer(serializers.ModelSerializer):
             "followers",
             "my_subscriptions",
         ]
+
+
+class UserUpdateAddSerializer(UserCreateSerializer):
+    """User model serializer for updating and adding with staff permissions."""
+
+    class Meta(UserCreateSerializer.Meta):
+        fields = UserCreateSerializer.Meta.fields.copy()
+        fields.remove("password")
