@@ -4,7 +4,7 @@ from rest_framework import serializers
 from users.models import User, ResidencePlace
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
     """User model serializer."""
 
     residence_place = serializers.PrimaryKeyRelatedField(
@@ -24,6 +24,7 @@ class UserSerializer(serializers.ModelSerializer):
             "is_staff",
             "first_name",
             "last_name",
+            "photo",
             "residence_place",
         ]
         read_only_fields = ["is_staff"]
@@ -53,6 +54,9 @@ class UserSerializer(serializers.ModelSerializer):
                 "style": {
                     "input_type": "text", "placeholder": "Last Name (optional)"
                 }
+            },
+            "photo": {
+                "required": False
             }
         }
 
