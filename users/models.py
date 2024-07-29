@@ -8,6 +8,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext as _
+from rest_framework.exceptions import ValidationError
 
 
 class UserManager(BaseUserManager):
@@ -110,7 +111,7 @@ class User(AbstractUser):
 
     # Remove the username field and use email as the username.
     username = models.CharField(
-        _("username"), max_length=150, blank=True, null=True, unique=True
+        _("username"), max_length=150, blank=True, null=True
     )
 
     # Add an email field with a unique constraint.
@@ -169,6 +170,18 @@ class User(AbstractUser):
                     f"Photo size should be less than "
                     f"{max_image_size / 1024 / 1024}MB"
                 )
+        if self.username:
+            existing_user = User.objects.filter(
+                username=self.username
+            ).exclude(pk=self.pk).first()
+            if existing_user:
+                raise ValidationError(
+                    _("A user with that username already exists.")
+                )
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        return super().save(*args, **kwargs)
 
     class Meta:
         ordering = ["email", "username"]
