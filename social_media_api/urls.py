@@ -42,5 +42,5 @@ urlpatterns = [
         "api/v1/token/verify/", TokenVerifyView.as_view(), name="token_verify"
     ),
     path("api/v1/token/logout/", LogoutView.as_view(), name="token_logout"),
-    path("api/v1/users/", include("users.urls")),
+    path("api/v1/", include("users.urls")),
 ] + debug_toolbar_urls()
