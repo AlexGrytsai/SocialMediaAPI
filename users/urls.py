@@ -9,6 +9,9 @@ router.register("users", UserViewSet)
 urlpatterns = [
     path("", include(router.urls)),
     path("me/", ManageUserView.as_view(), name="me"),
+    path(
+        "me/update-password/", ManageUserView.as_view(), name="update-password"
+    ),
 ]
 
 app_name = "users"

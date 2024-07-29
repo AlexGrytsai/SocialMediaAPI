@@ -1,11 +1,12 @@
 from django.http import HttpResponseRedirect
 from rest_framework import viewsets, generics, status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from users.models import User
 from users.serializers import UserCreateSerializer, UserListSerializer, \
-    UserDetailSerializer, UserUpdateSerializer
+    UserDetailSerializer, UserUpdateSerializer, UserPasswordUpdateSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -57,4 +58,25 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
     def get_serializer_class(self):
         if self.request.method == "GET":
             return UserDetailSerializer
+        if (self.request.method == "PUT" and
+            self.kwargs.get("action") == "update_password"):
+            return UserPasswordUpdateSerializer
         return UserUpdateSerializer
+
+    def update_password(self, request, *args, **kwargs):
+        """
+        Update the password of a user.
+        """
+        self.kwargs["action"] = "update_password"
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = self.get_object()
+        user.set_password(serializer.validated_data["password"])
+        user.save()
+        return Response({"detail": "Password updated successfully."},
+                        status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        if "update-password" in request.path:
+            return self.update_password(request, *args, **kwargs)
+        return super().put(request, *args, **kwargs)
