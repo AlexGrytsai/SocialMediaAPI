@@ -23,8 +23,8 @@ class UserViewSet(viewsets.ModelViewSet):
         return UserCreateSerializer
 
     def get_permissions(self):
-        if self.request.method == ("PUT", "PATCH", "DELETE"):
-            return (IsAdminUser,)
+        if self.request.method in ("PUT", "PATCH", "DELETE"):
+            return (IsAdminUser(),)
         return super().get_permissions()
 
     def retrieve(self, request, *args, **kwargs):
