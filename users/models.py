@@ -140,6 +140,22 @@ class User(AbstractUser):
         help_text="Residence place of the user.",
     )
 
+    followers = models.ManyToManyField(
+        "User",
+        symmetrical=False,
+        related_name="my_following",
+        db_comment="Users that follow this user.",
+        help_text="Users that follow this user.",
+    )
+
+    my_subscriptions = models.ManyToManyField(
+        "User",
+        symmetrical=False,
+        related_name="my_subscribers",
+        db_comment="Users this user is subscribed to.",
+        help_text="Users this user is subscribed to.",
+    )
+
     def clean(self):
         if self.photo:
             max_image_size = 2097152
