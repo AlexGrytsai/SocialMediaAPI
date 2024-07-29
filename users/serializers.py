@@ -111,3 +111,20 @@ class UserUpdateSerializer(UserCreateSerializer):
     class Meta(UserCreateSerializer.Meta):
         fields = UserCreateSerializer.Meta.fields.copy()
         fields.remove("password")
+
+
+class UserPasswordUpdateSerializer(serializers.Serializer):
+    """User model serializer for updating a user's password."""
+
+    password = serializers.CharField(
+        write_only=True,
+        min_length=8,
+        max_length=128,
+        style={"input_type": "password", "placeholder": "Password"},
+        validators=[validate_password]
+    )
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data["password"])
+        instance.save()
+        return instance
