@@ -69,6 +69,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 class UserListSerializer(serializers.ModelSerializer):
     """User model list serializer."""
+    residence_place = serializers.StringRelatedField()
 
     class Meta:
         model = User
@@ -78,12 +79,14 @@ class UserListSerializer(serializers.ModelSerializer):
             "username",
             "first_name",
             "last_name",
+            "birth_date",
             "residence_place"
         ]
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
     """User model detail serializer."""
+    residence_place = serializers.StringRelatedField()
 
     class Meta:
         model = User
