@@ -1,11 +1,19 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from users.models import User
+from users.models import User, ResidencePlace
 
 
 class UserSerializer(serializers.ModelSerializer):
     """User model serializer."""
+
+    residence_place = serializers.PrimaryKeyRelatedField(
+        queryset=ResidencePlace.objects.all(),
+        required=False,
+        allow_null=True,
+        default=None,
+    )
+
     class Meta:
         model = User
         fields = [
@@ -15,7 +23,8 @@ class UserSerializer(serializers.ModelSerializer):
             "username",
             "is_staff",
             "first_name",
-            "last_name"
+            "last_name",
+            "residence_place",
         ]
         read_only_fields = ["is_staff"]
         extra_kwargs = {
