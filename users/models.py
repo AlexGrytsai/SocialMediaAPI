@@ -123,6 +123,13 @@ class User(AbstractUser):
     # Use the custom UserManager.
     objects = UserManager()
 
+    birth_date = models.DateField(
+        null=True,
+        blank=True,
+        db_comment="Date of birth of the user.",
+        help_text="Date of birth of the user.",
+    )
+
     photo = models.ImageField(
         upload_to=create_custom_path_for_photo,
         null=True,
@@ -168,6 +175,7 @@ class User(AbstractUser):
         indexes = [
             models.Index(fields=["username"]),
             models.Index(fields=["last_name", "first_name"]),
+            models.Index(fields=["birth_date"]),
         ]
 
     def __str__(self):
