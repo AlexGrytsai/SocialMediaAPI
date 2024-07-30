@@ -207,8 +207,8 @@ class User(AbstractUser):
 
     def __str__(self):
         """String representation of the User model."""
-        if self.username:
-            return self.username
         if self.first_name and self.last_name:
             return f"{self.first_name} {self.last_name}"
+        if self.username:
+            return self.username
         return self.email
