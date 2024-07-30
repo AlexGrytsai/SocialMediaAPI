@@ -31,6 +31,28 @@ class UserViewSet(viewsets.ModelViewSet):
             return (AllowAny(),)
         return super().get_permissions()
 
+    def get_queryset(self):
+        username = self.request.query_params.get("username")
+        first_name = self.request.query_params.get("first_name")
+        last_name = self.request.query_params.get("last_name")
+        residence = self.request.query_params.get("residence")
+        birth_date = self.request.query_params.get("birthdate")
+
+        queryset = super(UserViewSet, self).get_queryset()
+
+        if username:
+            queryset = queryset.filter(username__icontains=username)
+        if first_name:
+            queryset = queryset.filter(first_name__icontains=first_name)
+        if last_name:
+            queryset = queryset.filter(last_name__icontains=last_name)
+        if residence:
+            queryset = queryset.filter(residence_place__name=residence)
+        if birth_date:
+            queryset = queryset.filter(birth_date__icontains=birth_date)
+
+        return queryset
+
     def retrieve(self, request, *args, **kwargs):
         """
         Retrieve a user by their ID. If the user ID matches the current
