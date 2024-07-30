@@ -1,5 +1,8 @@
+from datetime import date, datetime
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from django.utils.translation import gettext as _
 from rest_framework import serializers
 
 from users.models import User, ResidencePlace
@@ -70,7 +73,25 @@ class UserCreateSerializer(serializers.ModelSerializer):
     def validate_username(self, value: str) -> str:
         if User.objects.filter(username=value).exists():
             raise serializers.ValidationError(
-                "A user with that username already exists."
+                _("A user with that username already exists.")
+            )
+        return value
+
+    def validate_birth_date(self, value: str) -> str:
+        try:
+            birth_date = datetime.strptime(value, "%Y-%m-%d").date()
+        except ValueError:
+            raise serializers.ValidationError(
+                _("Birth date must be in the format YYYY-MM-DD.")
+            )
+        age = (date.today() - birth_date).days // 365
+        if age < 13:
+            raise serializers.ValidationError(
+                _("User must be at least 13 years old.")
+            )
+        if age > 100:
+            raise serializers.ValidationError(
+                _("User must be less than 100 years old.")
             )
         return value
 
@@ -126,7 +147,25 @@ class UserUpdateSerializer(UserCreateSerializer):
     def validate_username(self, value: str) -> str:
         if User.objects.filter(username=value).exists():
             raise serializers.ValidationError(
-                "A user with that username already exists."
+                _("A user with that username already exists.")
+            )
+        return value
+
+    def validate_birth_date(self, value: str) -> str:
+        try:
+            birth_date = datetime.strptime(value, "%Y-%m-%d").date()
+        except ValueError:
+            raise serializers.ValidationError(
+                _("Birth date must be in the format YYYY-MM-DD.")
+            )
+        age = (date.today() - birth_date).days // 365
+        if age < 13:
+            raise serializers.ValidationError(
+                _("User must be at least 13 years old.")
+            )
+        if age > 100:
+            raise serializers.ValidationError(
+                _("User must be less than 100 years old.")
             )
         return value
 
