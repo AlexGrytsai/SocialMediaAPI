@@ -53,6 +53,13 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
     """
     permission_classes = (IsAuthenticated,)
 
+    def get_queryset(self):
+        user = self.request.user
+
+        return User.objects.all().filter(id=user.id).select_related(
+            "residence_place"
+        ).prefetch_related("followers", "my_subscriptions")
+
     def get_object(self):
         return self.request.user
 
