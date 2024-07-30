@@ -2,6 +2,10 @@ from __future__ import annotations
 
 import os.path
 import uuid
+from datetime import (
+    timedelta,
+    date
+)
 
 import pycountry
 from django.contrib.auth.base_user import BaseUserManager
@@ -177,6 +181,16 @@ class User(AbstractUser):
             if existing_user:
                 raise ValidationError(
                     _("A user with that username already exists.")
+                )
+
+        if self.birth_date:
+            if self.birth_date - date.today() <= timedelta(days=365 * 13):
+                raise ValidationError(
+                    _("User must be at least 13 years old.")
+                )
+            if self.birth_date - date.today() >= timedelta(days=365 * 100):
+                raise ValidationError(
+                    _("User must be less than 100 years old.")
                 )
 
     def save(self, *args, **kwargs):
