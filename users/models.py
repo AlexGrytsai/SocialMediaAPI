@@ -170,8 +170,6 @@ class User(AbstractUser):
     def full_name(self):
         if self.first_name and self.last_name:
             return f"{self.first_name} {self.last_name}"
-        elif self.username:
-            return self.username
         return self.email
 
     def clean(self):
@@ -206,7 +204,7 @@ class User(AbstractUser):
         return super().save(*args, **kwargs)
 
     class Meta:
-        ordering = ["email", "username"]
+        ordering = ["date_joined"]
         indexes = [
             models.Index(fields=["username"]),
             models.Index(fields=["last_name", "first_name"]),
