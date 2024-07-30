@@ -102,6 +102,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class UserListSerializer(serializers.ModelSerializer):
     """User model list serializer."""
     residence_place = serializers.StringRelatedField()
+    is_following = serializers.BooleanField()
+    subscribed = serializers.BooleanField()
 
     class Meta:
         model = User
@@ -112,7 +114,9 @@ class UserListSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "birth_date",
-            "residence_place"
+            "residence_place",
+            "is_following",
+            "subscribed"
         ]
 
 
@@ -140,7 +144,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
     """User model detail serializer."""
     residence_place = serializers.StringRelatedField()
     followers = UserDetailFollowersAndSubscriptionsSerializer(many=True)
-    my_subscriptions = UserDetailFollowersAndSubscriptionsSerializer(many=True)
+    subscriptions = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -155,8 +159,13 @@ class UserDetailSerializer(serializers.ModelSerializer):
             "residence_place",
             "photo",
             "followers",
-            "my_subscriptions",
+            "subscriptions",
         ]
+
+    def get_subscriptions(self, obj):
+        return UserDetailFollowersAndSubscriptionsSerializer(
+            obj.my_subscriptions, many=True
+        ).data
 
 
 class UserUpdateSerializer(UserCreateSerializer):

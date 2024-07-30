@@ -1,3 +1,4 @@
+from django.db.models import Exists, OuterRef
 from django.http import HttpResponseRedirect
 from rest_framework import viewsets, generics, status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
@@ -50,6 +51,18 @@ class UserViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(residence_place__name=residence)
         if birth_date:
             queryset = queryset.filter(birth_date__icontains=birth_date)
+
+        user = self.request.user
+        queryset = queryset.annotate(
+            is_following=Exists(
+                User.objects.filter(id=OuterRef("id"), my_following=user)
+            ),
+            subscribed=Exists(
+                User.objects.filter(
+                    id=user.id, my_subscriptions=OuterRef("id")
+                )
+            )
+        )
 
         return queryset
 
