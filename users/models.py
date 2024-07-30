@@ -166,6 +166,14 @@ class User(AbstractUser):
         help_text="Users this user is subscribed to.",
     )
 
+    @property
+    def full_name(self):
+        if self.first_name and self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        elif self.username:
+            return self.username
+        return self.email
+
     def clean(self):
         if self.photo:
             max_image_size = 2097152
