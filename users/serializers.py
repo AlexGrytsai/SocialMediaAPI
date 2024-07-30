@@ -145,6 +145,8 @@ class UserDetailSerializer(serializers.ModelSerializer):
     residence_place = serializers.StringRelatedField()
     followers = UserDetailFollowersAndSubscriptionsSerializer(many=True)
     subscriptions = serializers.SerializerMethodField()
+    is_following = serializers.BooleanField()
+    subscribed = serializers.BooleanField()
 
     class Meta:
         model = User
@@ -158,6 +160,8 @@ class UserDetailSerializer(serializers.ModelSerializer):
             "birth_date",
             "residence_place",
             "photo",
+            "is_following",
+            "subscribed",
             "followers",
             "subscriptions",
         ]
