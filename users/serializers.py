@@ -66,6 +66,13 @@ class UserCreateSerializer(serializers.ModelSerializer):
             }
         }
 
+    def validate_username(self, value):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError(
+                "A user with that username already exists."
+            )
+        return value
+
 
 class UserListSerializer(serializers.ModelSerializer):
     """User model list serializer."""
@@ -111,6 +118,13 @@ class UserUpdateSerializer(UserCreateSerializer):
     class Meta(UserCreateSerializer.Meta):
         fields = UserCreateSerializer.Meta.fields.copy()
         fields.remove("password")
+
+    def validate_username(self, value):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError(
+                "A user with that username already exists."
+            )
+        return value
 
 
 class UserPasswordUpdateSerializer(serializers.Serializer):
