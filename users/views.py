@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect
 from rest_framework import viewsets, generics, status
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
@@ -28,6 +28,8 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.request.method in ("PUT", "PATCH", "DELETE"):
             return (IsAdminUser(),)
+        if self.request.method == "POST":
+            return (AllowAny(),)
         return super().get_permissions()
 
     def retrieve(self, request, *args, **kwargs):
