@@ -116,9 +116,31 @@ class UserListSerializer(serializers.ModelSerializer):
         ]
 
 
+class UserDetailFollowersAndSubscriptionsSerializer(
+    serializers.ModelSerializer
+):
+    """
+    Serializer for the User model to display followers and subscriptions.
+
+    This serializer is used to display the followers and subscriptions of
+    a user. It includes the user's id, username, and full name.
+    """
+    name = serializers.CharField(source="full_name")
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "username",
+            "name",
+        ]
+
+
 class UserDetailSerializer(serializers.ModelSerializer):
     """User model detail serializer."""
     residence_place = serializers.StringRelatedField()
+    followers = UserDetailFollowersAndSubscriptionsSerializer(many=True)
+    my_subscriptions = UserDetailFollowersAndSubscriptionsSerializer(many=True)
 
     class Meta:
         model = User
