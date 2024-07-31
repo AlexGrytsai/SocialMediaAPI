@@ -110,6 +110,33 @@ class UserViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
+    @action(
+        detail=True,
+        methods=["GET"],
+        url_path="unsubscribe",
+        url_name="unsubscribe",
+        permission_classes=[IsAuthenticated],
+    )
+    def unsubscribe(self, request: HttpRequest, pk: int = None):
+        user = self.request.user
+        user_to_unsubscribe = get_object_or_404(User, pk=pk)
+        if user_to_unsubscribe not in user.my_subscriptions.all():
+            return Response(
+                data={
+                    "message":
+                        f"Not followed from {user_to_unsubscribe} (id={pk})"
+                },
+                status=status.HTTP_200_OK
+            )
+        user.my_subscriptions.remove(user_to_unsubscribe)
+        user_to_unsubscribe.followers.remove(user)
+        return Response(
+            data={
+                "message": f"Unsubscribed from {user_to_unsubscribe} (id={pk})"
+            },
+            status=status.HTTP_200_OK
+        )
+
 
 class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
     """
