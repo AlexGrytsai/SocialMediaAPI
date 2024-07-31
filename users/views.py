@@ -1,12 +1,16 @@
 from django.db.models import Exists, OuterRef
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpRequest
 from rest_framework import viewsets, generics, status
+from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from users.models import User
 from users.serializers import UserCreateSerializer, UserListSerializer, \
-    UserDetailSerializer, UserUpdateSerializer, UserPasswordUpdateSerializer
+    UserDetailSerializer, UserUpdateSerializer, UserPasswordUpdateSerializer, \
+    UserManageSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -55,7 +59,7 @@ class UserViewSet(viewsets.ModelViewSet):
         user = self.request.user
         queryset = queryset.annotate(
             is_following=Exists(
-                User.objects.filter(id=OuterRef("id"), my_following=user)
+                User.objects.filter(id=user.id, followers=OuterRef("id"))
             ),
             subscribed=Exists(
                 User.objects.filter(
@@ -81,6 +85,31 @@ class UserViewSet(viewsets.ModelViewSet):
             )
         return super().retrieve(request, *args, **kwargs)
 
+    @action(
+        detail=True,
+        methods=["GET"],
+        url_path="subscribe",
+        url_name="subscribe",
+        permission_classes=[IsAuthenticated],
+    )
+    def subscribe(self, request: HttpRequest, pk: int = None):
+        user = self.request.user
+        user_to_subscribe = get_object_or_404(User, pk=pk)
+        if user_to_subscribe in user.my_subscriptions.all():
+            return Response(
+                data={
+                    "message":
+                        f"Already followed from {user_to_subscribe} (id={pk})"
+                },
+                status=status.HTTP_200_OK
+            )
+        user.my_subscriptions.add(user_to_subscribe)
+        user_to_subscribe.followers.add(user)
+        return Response(
+            data={"message": f"Subscribed from {user_to_subscribe} (id={pk})"},
+            status=status.HTTP_200_OK
+        )
+
 
 class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
     """
@@ -93,14 +122,14 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
 
         return User.objects.all().filter(id=user.id).select_related(
             "residence_place"
-        ).prefetch_related("followers", "my_subscriptions")
+        )
 
     def get_object(self):
         return self.request.user
 
     def get_serializer_class(self):
         if self.request.method == "GET":
-            return UserDetailSerializer
+            return UserManageSerializer
         return UserUpdateSerializer
 
 
