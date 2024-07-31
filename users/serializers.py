@@ -140,13 +140,11 @@ class UserDetailFollowersAndSubscriptionsSerializer(
         ]
 
 
-class UserDetailSerializer(serializers.ModelSerializer):
-    """User model detail serializer."""
+class UserManageSerializer(serializers.ModelSerializer):
+    """User model serializer for managing a user profile."""
     residence_place = serializers.StringRelatedField()
     followers = UserDetailFollowersAndSubscriptionsSerializer(many=True)
     subscriptions = serializers.SerializerMethodField()
-    is_following = serializers.BooleanField()
-    subscribed = serializers.BooleanField()
 
     class Meta:
         model = User
@@ -160,8 +158,6 @@ class UserDetailSerializer(serializers.ModelSerializer):
             "birth_date",
             "residence_place",
             "photo",
-            "is_following",
-            "subscribed",
             "followers",
             "subscriptions",
         ]
@@ -170,6 +166,25 @@ class UserDetailSerializer(serializers.ModelSerializer):
         return UserDetailFollowersAndSubscriptionsSerializer(
             obj.my_subscriptions, many=True
         ).data
+
+
+class UserDetailSerializer(UserManageSerializer):
+    """
+    Serializer for the User model to display detailed information about a user.
+
+    This serializer extends the UserManageSerializer and adds additional fields
+    to display whether the user is following another user and whether the user
+    is subscribed to another user.
+    """
+    is_following = serializers.BooleanField()
+    subscribed = serializers.BooleanField()
+
+    class Meta:
+        model = User
+        fields = UserManageSerializer.Meta.fields + [
+            "is_following",
+            "subscribed",
+        ]
 
 
 class UserUpdateSerializer(UserCreateSerializer):
