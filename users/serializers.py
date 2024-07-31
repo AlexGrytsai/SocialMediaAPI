@@ -9,23 +9,22 @@ from users.models import User, ResidencePlace
 
 
 def validate_birth_date(value: str | None) -> str | None:
-    if value is None:
-        return value
-    try:
-        birth_date = datetime.strptime(value, "%Y-%m-%d").date()
-    except ValueError:
-        raise serializers.ValidationError(
-            _("Birth date must be in the format YYYY-MM-DD.")
-        )
-    age = (date.today() - birth_date).days // 365
-    if age < 13:
-        raise serializers.ValidationError(
-            _("User must be at least 13 years old.")
-        )
-    if age > 100:
-        raise serializers.ValidationError(
-            _("User must be less than 100 years old.")
-        )
+    if value:
+        try:
+            birth_date = datetime.strptime(value, "%Y-%m-%d").date()
+        except ValueError:
+            raise serializers.ValidationError(
+                _("Birth date must be in the format YYYY-MM-DD.")
+            )
+        age = (date.today() - birth_date).days // 365
+        if age < 13:
+            raise serializers.ValidationError(
+                _("User must be at least 13 years old.")
+            )
+        if age > 100:
+            raise serializers.ValidationError(
+                _("User must be less than 100 years old.")
+            )
     return value
 
 

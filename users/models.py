@@ -190,11 +190,11 @@ class User(AbstractUser):
                 )
 
         if self.birth_date:
-            if self.birth_date - date.today() <= timedelta(days=365 * 13):
+            if date.today() - self.birth_date <= timedelta(days=365 * 13):
                 raise ValidationError(
-                    _("User must be at least 13 years old.")
+                    _(f"User must be at least 13 years old.")
                 )
-            if self.birth_date - date.today() >= timedelta(days=365 * 100):
+            if date.today() - self.birth_date >= timedelta(days=365 * 100):
                 raise ValidationError(
                     _("User must be less than 100 years old.")
                 )
