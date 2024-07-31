@@ -1,16 +1,39 @@
-from django.db.models import Exists, OuterRef
-from django.http import HttpResponseRedirect, HttpRequest
-from rest_framework import viewsets, generics, status
+from typing import Type
+
+from django.db.models import (
+    Exists,
+    OuterRef,
+    QuerySet
+)
+from django.http import (
+    HttpResponseRedirect,
+    HttpRequest
+)
+from rest_framework import (
+    viewsets,
+    generics,
+    status
+)
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAdminUser,
+    AllowAny
+)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework.serializers import Serializer
 
 from users.models import User
-from users.serializers import UserCreateSerializer, UserListSerializer, \
-    UserDetailSerializer, UserUpdateSerializer, UserPasswordUpdateSerializer, \
+from users.serializers import (
+    UserCreateSerializer,
+    UserListSerializer,
+    UserDetailSerializer,
+    UserUpdateSerializer,
+    UserPasswordUpdateSerializer,
     UserManageSerializer
+)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -29,14 +52,14 @@ class UserViewSet(viewsets.ModelViewSet):
             return UserUpdateSerializer
         return UserCreateSerializer
 
-    def get_permissions(self):
+    def get_permissions(self) -> tuple:
         if self.request.method in ("PUT", "PATCH", "DELETE"):
             return (IsAdminUser(),)
         if self.request.method == "POST":
             return (AllowAny(),)
         return super().get_permissions()
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         username = self.request.query_params.get("username")
         first_name = self.request.query_params.get("first_name")
         last_name = self.request.query_params.get("last_name")
@@ -70,7 +93,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return queryset
 
-    def retrieve(self, request, *args, **kwargs):
+    def retrieve(self, request, *args, **kwargs) -> HttpResponseRedirect:
         """
         Retrieve a user by their ID. If the user ID matches the current
         user's ID, redirect to the 'users:me' endpoint.
@@ -92,7 +115,7 @@ class UserViewSet(viewsets.ModelViewSet):
         url_name="subscribe",
         permission_classes=[IsAuthenticated],
     )
-    def subscribe(self, request: HttpRequest, pk: int = None):
+    def subscribe(self, request: HttpRequest, pk: int = None) -> Response:
         user = self.request.user
         user_to_subscribe = get_object_or_404(User, pk=pk)
         if user_to_subscribe in user.my_subscriptions.all():
@@ -117,7 +140,7 @@ class UserViewSet(viewsets.ModelViewSet):
         url_name="unsubscribe",
         permission_classes=[IsAuthenticated],
     )
-    def unsubscribe(self, request: HttpRequest, pk: int = None):
+    def unsubscribe(self, request: HttpRequest, pk: int = None) -> Response:
         user = self.request.user
         user_to_unsubscribe = get_object_or_404(User, pk=pk)
         if user_to_unsubscribe not in user.my_subscriptions.all():
@@ -144,17 +167,17 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
     """
     permission_classes = (IsAuthenticated,)
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         user = self.request.user
 
         return User.objects.all().filter(id=user.id).select_related(
             "residence_place"
         )
 
-    def get_object(self):
+    def get_object(self) -> User:
         return self.request.user
 
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> Type[Serializer]:
         if self.request.method == "GET":
             return UserManageSerializer
         return UserUpdateSerializer
@@ -167,5 +190,5 @@ class UserPasswordUpdateView(generics.UpdateAPIView):
     serializer_class = UserPasswordUpdateSerializer
     permission_classes = (IsAuthenticated,)
 
-    def get_object(self):
+    def get_object(self) -> User:
         return self.request.user
