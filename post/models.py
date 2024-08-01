@@ -9,7 +9,7 @@ from users.models import User
 
 
 class Hashtag(models.Model):
-    name = models.CharField(
+    tag = models.CharField(
         max_length=50,
         unique=True,
         primary_key=True,
@@ -18,12 +18,12 @@ class Hashtag(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return self.tag
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["tag"]
         indexes = [
-            models.Index(fields=["-name"]),
+            models.Index(fields=["-tag"]),
         ]
 
 
