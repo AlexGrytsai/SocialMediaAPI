@@ -67,6 +67,11 @@ class UserCreateSerializer(serializers.ModelSerializer):
             }
         }
 
+    def to_internal_value(self, data):
+        if "birth_date" in data and data["birth_date"] == "":
+            data["birth_date"] = None
+        return super().to_internal_value(data)
+
     def create(self, validated_data: dict) -> User:
         return get_user_model().objects.create_user(**validated_data)
 
