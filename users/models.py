@@ -11,6 +11,7 @@ import pycountry
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import gettext as _
 from rest_framework.exceptions import ValidationError
 
@@ -180,14 +181,6 @@ class User(AbstractUser):
                     f"Photo size should be less than "
                     f"{max_image_size / 1024 / 1024}MB"
                 )
-        if self.username:
-            existing_user = User.objects.filter(
-                username=self.username
-            ).exclude(pk=self.pk).first()
-            if existing_user:
-                raise ValidationError(
-                    _("A user with that username already exists.")
-                )
 
         if self.birth_date:
             if date.today() - self.birth_date <= timedelta(days=365 * 13):
@@ -209,6 +202,15 @@ class User(AbstractUser):
             models.Index(fields=["username"]),
             models.Index(fields=["last_name", "first_name"]),
             models.Index(fields=["birth_date"]),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["username"],
+                condition=Q(username__isnull=False),
+                name="unique_username",
+                violation_error_message="A user with that username already "
+                                        "exists.",
+            )
         ]
 
     def __str__(self):

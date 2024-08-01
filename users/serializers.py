@@ -8,14 +8,17 @@ from rest_framework import serializers
 from users.models import User, ResidencePlace
 
 
-def validate_birth_date(value: str | None) -> str | None:
+def validate_birth_date(value: str | datetime | None) -> str | None:
     if value:
-        try:
-            birth_date = datetime.strptime(value, "%Y-%m-%d").date()
-        except ValueError:
-            raise serializers.ValidationError(
-                _("Birth date must be in the format YYYY-MM-DD.")
-            )
+        if not isinstance(value, str):
+            birth_date = value
+        else:
+            try:
+                birth_date = datetime.strptime(value, "%Y-%m-%d").date()
+            except ValueError:
+                raise serializers.ValidationError(
+                    _("Birth date must be in the format YYYY-MM-DD.")
+                )
         age = (date.today() - birth_date).days // 365
         if age < 13:
             raise serializers.ValidationError(
@@ -89,13 +92,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
                 "required": False
             }
         }
-
-    def validate_username(self, value: str) -> str:
-        if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError(
-                _("A user with that username already exists.")
-            )
-        return value
 
     def validate_birth_date(self, value: str) -> str:
         return validate_birth_date(value)
@@ -199,14 +195,7 @@ class UserUpdateSerializer(UserCreateSerializer):
         fields = UserCreateSerializer.Meta.fields.copy()
         fields.remove("password")
 
-    def validate_username(self, value: str) -> str:
-        if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError(
-                _("A user with that username already exists.")
-            )
-        return value
-
-    def validate_birth_date(self, value: str | None) -> str | None:
+    def validate_birth_date(self, value: str | datetime | None) -> str | None:
         return validate_birth_date(value)
 
 
