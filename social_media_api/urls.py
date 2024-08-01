@@ -43,8 +43,8 @@ urlpatterns = [
         "api/v1/token/verify/", TokenVerifyView.as_view(), name="token_verify"
     ),
     path("api/v1/token/logout/", LogoutView.as_view(), name="token_logout"),
-    path("api/v1/", include("users.urls")),
-    path("api/v1/", include("post.urls")),
+    path("api/v1/users/", include("users.urls")),
+    path("api/v1/posts/", include("post.urls")),
 ] + debug_toolbar_urls() + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 )
