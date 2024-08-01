@@ -201,15 +201,10 @@ class User(AbstractUser):
                                         "exists.",
             ),
             models.CheckConstraint(
-                check=Q(birth_date__isnull=True) |
-                      Q(
-                          birth_date__lte=date.today() - timedelta(
-                              days=365 * 13)
-                      ) &
-                      Q(
-                          birth_date__gte=date.today() - timedelta(
-                              days=365 * 100)
-                      ),
+                check=
+                Q(birth_date__isnull=True) |
+                Q(birth_date__lte=date.today() - timedelta(days=365 * 13)) &
+                Q(birth_date__gte=date.today() - timedelta(days=365 * 100)),
                 name="check_age",
                 violation_error_message="User must be at least 13 years old "
                                         "and less than 100 years old.",
