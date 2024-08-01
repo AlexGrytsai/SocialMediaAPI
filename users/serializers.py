@@ -1,34 +1,8 @@
-from datetime import date, datetime
-
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-from django.utils.translation import gettext as _
 from rest_framework import serializers
 
 from users.models import User, ResidencePlace
-
-
-def validate_birth_date(value: str | datetime | None) -> str | None:
-    if value:
-        if not isinstance(value, str):
-            birth_date = value
-        else:
-            try:
-                birth_date = datetime.strptime(value, "%Y-%m-%d").date()
-            except ValueError:
-                raise serializers.ValidationError(
-                    _("Birth date must be in the format YYYY-MM-DD.")
-                )
-        age = (date.today() - birth_date).days // 365
-        if age < 13:
-            raise serializers.ValidationError(
-                _("User must be at least 13 years old.")
-            )
-        if age > 100:
-            raise serializers.ValidationError(
-                _("User must be less than 100 years old.")
-            )
-    return value
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -92,9 +66,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
                 "required": False
             }
         }
-
-    def validate_birth_date(self, value: str) -> str:
-        return validate_birth_date(value)
 
     def create(self, validated_data: dict) -> User:
         return get_user_model().objects.create_user(**validated_data)
@@ -194,9 +165,6 @@ class UserUpdateSerializer(UserCreateSerializer):
     class Meta(UserCreateSerializer.Meta):
         fields = UserCreateSerializer.Meta.fields.copy()
         fields.remove("password")
-
-    def validate_birth_date(self, value: str | datetime | None) -> str | None:
-        return validate_birth_date(value)
 
 
 class UserPasswordUpdateSerializer(serializers.ModelSerializer):

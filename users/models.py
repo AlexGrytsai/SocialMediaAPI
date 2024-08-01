@@ -13,7 +13,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext as _
-from rest_framework.exceptions import ValidationError
 
 
 class UserManager(BaseUserManager):
@@ -182,16 +181,6 @@ class User(AbstractUser):
                     f"{max_image_size / 1024 / 1024}MB"
                 )
 
-        if self.birth_date:
-            if date.today() - self.birth_date <= timedelta(days=365 * 13):
-                raise ValidationError(
-                    _(f"User must be at least 13 years old.")
-                )
-            if date.today() - self.birth_date >= timedelta(days=365 * 100):
-                raise ValidationError(
-                    _("User must be less than 100 years old.")
-                )
-
     def save(self, *args, **kwargs):
         self.clean()
         return super().save(*args, **kwargs)
@@ -210,6 +199,20 @@ class User(AbstractUser):
                 name="unique_username",
                 violation_error_message="A user with that username already "
                                         "exists.",
+            ),
+            models.CheckConstraint(
+                check=Q(birth_date__isnull=True) |
+                      Q(
+                          birth_date__lte=date.today() - timedelta(
+                              days=365 * 13)
+                      ) &
+                      Q(
+                          birth_date__gte=date.today() - timedelta(
+                              days=365 * 100)
+                      ),
+                name="check_age",
+                violation_error_message="User must be at least 13 years old "
+                                        "and less than 100 years old.",
             )
         ]
 
