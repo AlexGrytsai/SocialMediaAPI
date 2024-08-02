@@ -23,3 +23,16 @@ class PostViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return PostDetailSerializer
         return super().get_serializer_class()
+
+    @staticmethod
+    def _get_params_hashtag(qr_params: str) -> list:
+        return [hashtag.lower() for hashtag in qr_params.split(",")]
+
+    def get_queryset(self):
+        hashtags = self.request.query_params.get("hashtag")
+
+        if hashtags:
+            return self.queryset.filter(
+                hashtags__tag__in=self._get_params_hashtag(hashtags)
+            )
+        return self.queryset
