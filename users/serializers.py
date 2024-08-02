@@ -1,5 +1,9 @@
+import os
+from urllib.request import urlopen
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from django.core.files.base import ContentFile
 from rest_framework import serializers
 
 from users.models import User, ResidencePlace
@@ -14,11 +18,15 @@ class UserCreateSerializer(serializers.ModelSerializer):
         allow_null=True,
         default=None,
     )
+    photo = serializers.ImageField(
+        required=False,
+        use_url=True,
+        allow_null=True
+    )
 
     class Meta:
         model = User
         fields = [
-            "id",
             "email",
             "password",
             "username",
@@ -62,18 +70,39 @@ class UserCreateSerializer(serializers.ModelSerializer):
                     "placeholder": "Birth date (optional)"
                 }
             },
-            "photo": {
-                "required": False
-            }
         }
 
     def to_internal_value(self, data):
         if "birth_date" in data and data["birth_date"] == "":
             data["birth_date"] = None
+        if "photo" in data and data["photo"] == "":
+            data["photo"] = None
+        if (
+            "photo" in data
+            and isinstance(data["photo"], str)
+            and data["photo"].startswith("http")
+        ):
+            try:
+                response = urlopen(data["photo"])
+                file_name = os.path.basename(data["photo"])
+                data["photo"] = ContentFile(response.read(), name=file_name)
+            except Exception:
+                raise serializers.ValidationError(
+                    {"photo": "Error downloading image."}
+                )
         return super().to_internal_value(data)
 
     def create(self, validated_data: dict) -> User:
         return get_user_model().objects.create_user(**validated_data)
+
+    def update(self, instance: User, validated_data: dict) -> User:
+        if validated_data["photo"]:
+            if instance.photo:
+                old_name_photo = os.path.basename(instance.photo.name)
+                new_name_photo = validated_data["photo"].name
+                if old_name_photo == new_name_photo:
+                    validated_data.pop("photo")
+        return super().update(instance, validated_data)
 
 
 class UserListSerializer(serializers.ModelSerializer):
