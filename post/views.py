@@ -1,7 +1,9 @@
 from rest_framework import viewsets
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from post.models import Post
-from post.serializers import PostSerializer, PostListSerializer, PostDetailSerializer
+from post.serializers import PostSerializer, PostListSerializer, \
+    PostDetailSerializer
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -9,6 +11,11 @@ class PostViewSet(viewsets.ModelViewSet):
         "hashtags"
     )
     serializer_class = PostSerializer
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return (AllowAny(),)
+        return (IsAuthenticated(),)
 
     def get_serializer_class(self):
         if self.action == "list":
