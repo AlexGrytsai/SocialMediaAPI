@@ -1,3 +1,7 @@
+import os
+from urllib.request import urlopen
+
+from django.core.files.base import ContentFile
 from django.db import transaction
 from rest_framework import serializers
 
@@ -46,6 +50,24 @@ class PostSerializer(serializers.ModelSerializer):
             },
         }
 
+    def to_internal_value(self, data: dict) -> dict:
+        if "image" in data and data["image"] == "":
+            data["image"] = None
+        if (
+            "image" in data
+            and isinstance(data["image"], str)
+            and data["image"].startswith("http")
+        ):
+            try:
+                response = urlopen(data["image"])
+                file_name = os.path.basename(data["image"])
+                data["image"] = ContentFile(response.read(), name=file_name)
+            except Exception:
+                raise serializers.ValidationError(
+                    {"image": "Error downloading image."}
+                )
+        return super().to_internal_value(data)
+
     def create(self, validated_data: dict) -> Post:
         user = self.context["request"].user
         with transaction.atomic():
@@ -74,7 +96,12 @@ class PostSerializer(serializers.ModelSerializer):
             if hashtags:
                 for hashtag in hashtags:
                     instance.hashtags.add(hashtag)
-            return instance
+        if validated_data["image"]:
+            old_name_image = os.path.basename(instance.image.name)
+            new_name_image = validated_data["image"].name
+            if old_name_image == new_name_image:
+                validated_data.pop("image")
+        return instance
 
 
 class PostListSerializer(serializers.ModelSerializer):
