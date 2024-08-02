@@ -105,7 +105,7 @@ class ResidencePlace(models.Model):
 
 def create_custom_path_for_photo(instance: User, filename: str) -> str:
     _, extension = os.path.splitext(filename)
-    return f"users-photos/{instance.email}/{uuid.uuid4()}{extension}"
+    return f"users-photos/{instance.email}/photos/{uuid.uuid4()}{extension}"
 
 
 class User(AbstractUser):
