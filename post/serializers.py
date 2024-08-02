@@ -36,7 +36,6 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = [
-            "id",
             "title",
             "text",
             "image",
@@ -105,8 +104,25 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class PostListSerializer(serializers.ModelSerializer):
-    author = serializers.CharField(source="owner.username")
+    author = serializers.CharField(source="owner")
 
     class Meta:
         model = Post
         fields = ["id", "title", "author", "hashtags"]
+
+
+class PostDetailSerializer(serializers.ModelSerializer):
+    author = serializers.CharField(source="owner")
+    hashtags = HashtagSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Post
+        fields = [
+            "id",
+            "title",
+            "text",
+            "author",
+            "image",
+            "created_date",
+            "hashtags"
+        ]
