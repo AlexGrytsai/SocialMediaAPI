@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.http import HttpRequest, HttpResponse
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -44,6 +45,12 @@ class PostViewSet(viewsets.ModelViewSet):
             )
         if author:
             queryset = queryset.filter(owner__username=author)
+
+        if self.action == "list":
+            queryset = queryset.annotate(
+                comments_count=Count("comments"),
+                likes_count=Count("likes")
+            )
 
         return queryset
 
