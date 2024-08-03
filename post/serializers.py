@@ -30,6 +30,19 @@ class CommentSerializer(serializers.ModelSerializer):
         return comment
 
 
+class CommentListSerializer(serializers.ModelSerializer):
+    author = serializers.CharField(source="owner")
+
+    class Meta:
+        model = Comment
+        fields = [
+            "id",
+            "text",
+            "author",
+            "created_date",
+        ]
+
+
 class PostSerializer(serializers.ModelSerializer):
     """
     Serializer for the Post model.
@@ -138,7 +151,7 @@ class PostListSerializer(serializers.ModelSerializer):
 
 class PostDetailSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source="owner")
-    comments = serializers.StringRelatedField(many=True)
+    comments = CommentListSerializer(many=True, read_only=True)
 
     class Meta:
         model = Post
