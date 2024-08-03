@@ -34,13 +34,18 @@ class PostViewSet(viewsets.ModelViewSet):
         return [hashtag.lower() for hashtag in qr_params.split(",")]
 
     def get_queryset(self):
+        queryset = super(PostViewSet, self).get_queryset()
         hashtags = self.request.query_params.get("hashtag")
+        author = self.request.query_params.get("author")
 
         if hashtags:
-            return self.queryset.filter(
+            queryset = queryset.filter(
                 hashtags__tag__in=self._get_params_hashtag(hashtags)
             )
-        return self.queryset
+        if author:
+            queryset = queryset.filter(owner__username=author)
+
+        return queryset
 
     @action(
         detail=True,
