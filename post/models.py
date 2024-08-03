@@ -42,7 +42,7 @@ class Comment(models.Model):
     )
 
     def __str__(self):
-        return f"Comment: {self.text} ({self.owner})"
+        return f"{self.text} ({self.owner})"
 
 
 class Like(models.Model):
