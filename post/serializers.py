@@ -4,14 +4,30 @@ from urllib.request import urlopen
 from django.core.files.base import ContentFile
 from django.db import transaction
 from rest_framework import serializers
+from rest_framework.generics import get_object_or_404
 
-from post.models import Post, Hashtag
+from post.models import Post, Hashtag, Comment
 
 
 class HashtagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hashtag
         fields = ["tag"]
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ["text"]
+
+    def create(self, validated_data: dict, **args) -> Comment:
+        pk = self.context["request"].parser_context["kwargs"]["pk"]
+        post = get_object_or_404(Post, pk=pk)
+        comment = Comment.objects.create(
+            **validated_data, owner=self.context["request"].user
+        )
+        post.comments.add(comment)
+        return comment
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -113,7 +129,7 @@ class PostListSerializer(serializers.ModelSerializer):
 
 class PostDetailSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source="owner")
-    hashtags = HashtagSerializer(many=True, read_only=True)
+    comments = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = Post
@@ -124,5 +140,6 @@ class PostDetailSerializer(serializers.ModelSerializer):
             "author",
             "image",
             "created_date",
-            "hashtags"
+            "hashtags",
+            "comments",
         ]
