@@ -1,9 +1,12 @@
-from rest_framework import viewsets
+from django.http import HttpRequest, HttpResponse
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 
 from post.models import Post
 from post.serializers import PostSerializer, PostListSerializer, \
-    PostDetailSerializer
+    PostDetailSerializer, CommentSerializer
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -22,6 +25,8 @@ class PostViewSet(viewsets.ModelViewSet):
             return PostListSerializer
         if self.action == "retrieve":
             return PostDetailSerializer
+        if self.action == "add_comment":
+            return CommentSerializer
         return super().get_serializer_class()
 
     @staticmethod
@@ -36,3 +41,21 @@ class PostViewSet(viewsets.ModelViewSet):
                 hashtags__tag__in=self._get_params_hashtag(hashtags)
             )
         return self.queryset
+
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="add-comment",
+        url_name="add-comment",
+        permission_classes=[IsAuthenticated],
+    )
+    def add_comment(
+        self,
+        request: HttpRequest,
+        pk: int = None
+    ) -> HttpResponse:
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
