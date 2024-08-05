@@ -3,7 +3,8 @@ from typing import Type
 from django.db.models import (
     Exists,
     OuterRef,
-    QuerySet
+    QuerySet,
+    Count
 )
 from django.http import (
     HttpResponseRedirect,
@@ -12,7 +13,8 @@ from django.http import (
 from rest_framework import (
     viewsets,
     generics,
-    status
+    status,
+    mixins
 )
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
@@ -25,6 +27,11 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.serializers import Serializer
 
+from post.models import Post
+from post.serializers import (
+    PostSerializer,
+    PostListSerializer
+)
 from users.models import User
 from users.serializers import (
     UserCreateSerializer,
@@ -50,6 +57,8 @@ class UserViewSet(viewsets.ModelViewSet):
             return UserDetailSerializer
         if self.action in ("update", "partial_update"):
             return UserUpdateSerializer
+        if self.action in ("my_posts", "my_subscriptions_posts"):
+            return PostListSerializer
         return UserCreateSerializer
 
     def get_permissions(self) -> tuple:
@@ -160,6 +169,44 @@ class UserViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
+    @action(
+        detail=False,
+        methods=["GET"],
+        url_path="my-posts",
+        url_name="my-posts",
+        permission_classes=[IsAuthenticated],
+    )
+    def my_posts(self, request: HttpRequest, pk: int = None) -> Response:
+        user = self.request.user
+        posts = Post.objects.filter(owner=user).annotate(
+                comments_count=Count("comments"),
+                likes_count=Count("likes")
+            )
+        serializer = PostListSerializer(posts, many=True)
+        return Response(serializer.data)
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        url_path="my-subscriptions-posts",
+        url_name="my-subscriptions-posts",
+        permission_classes=[IsAuthenticated],
+    )
+    def my_subscriptions_posts(
+        self,
+        request: HttpRequest,
+        pk: int = None
+    ) -> Response:
+        user = self.request.user
+        posts = Post.objects.filter(
+            owner__in=user.my_subscriptions.all()
+        ).annotate(
+                comments_count=Count("comments"),
+                likes_count=Count("likes")
+            )
+        serializer = PostListSerializer(posts, many=True)
+        return Response(serializer.data)
+
 
 class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
     """
@@ -192,3 +239,15 @@ class UserPasswordUpdateView(generics.UpdateAPIView):
 
     def get_object(self) -> User:
         return self.request.user
+
+
+class UserMyPostsView(generics.ListAPIView, mixins.RetrieveModelMixin):
+    """
+    API endpoint that allows users to see their posts.
+    """
+    serializer_class = PostSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self) -> QuerySet:
+        user = self.request.user
+        return Post.objects.filter(author=user)
