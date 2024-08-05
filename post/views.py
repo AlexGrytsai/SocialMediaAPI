@@ -19,6 +19,8 @@ class PostViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.request.method == "GET":
             return (AllowAny(),)
+        if self.action in ("add_comment", "edit_comment", "like"):
+            return (IsAuthenticated(),)
         return (IsAuthenticated(),)
 
     def get_serializer_class(self):
@@ -104,3 +106,35 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=True,
+        methods=["GET"],
+        url_path="like",
+        url_name="like",
+        permission_classes=[IsAuthenticated],
+    )
+    def like(
+        self,
+        request: HttpRequest,
+        pk: int = None
+    ) -> HttpResponse:
+        if self.request.user.is_anonymous:
+            return Response(
+                data={"message": "You need to be logged in to like posts"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        user = self.request.user
+        post = self.get_object()
+        if user in post.likes.all():
+            return Response(
+                data={"message": "You already liked this post"},
+                status=status.HTTP_200_OK
+            )
+        post.likes.add(user)
+        return Response(
+            data={
+                "message": f"You liked this post '{post.title}' (id={post.id})"
+            },
+            status=status.HTTP_200_OK
+        )
