@@ -45,15 +45,6 @@ class Comment(models.Model):
         return f"{self.text} ({self.owner})"
 
 
-class Like(models.Model):
-    owner = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="likes"
-    )
-
-    def __str__(self):
-        return f"Like: {self.owner}"
-
-
 def create_custom_path_for_image(instance: Post, filename: str) -> str:
     _, extension = os.path.splitext(filename)
     return (f"users-photos/{instance.owner.email}/posts/"
@@ -86,7 +77,7 @@ class Post(models.Model):
         User, on_delete=models.CASCADE, related_name="posts"
     )
     hashtags = models.ManyToManyField(Hashtag, related_name="posts")
-    likes = models.ManyToManyField(Like, related_name="posts")
+    likes = models.ManyToManyField(User, related_name="posts_liked")
     comments = models.ManyToManyField(Comment, related_name="posts")
 
     def __str__(self):
