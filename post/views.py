@@ -17,7 +17,7 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
 
     def get_permissions(self):
-        if self.action in ("add_comment", "edit_comment", "like"):
+        if self.action in ("add_comment", "edit_comment", "like", "unlike"):
             return (IsAuthenticated(),)
         if self.request.method == "GET":
             return (AllowAny(),)
@@ -130,6 +130,34 @@ class PostViewSet(viewsets.ModelViewSet):
         return Response(
             data={
                 "message": f"You liked this post '{post.title}' (id={post.id})"
+            },
+            status=status.HTTP_200_OK
+        )
+
+    @action(
+        detail=True,
+        methods=["GET"],
+        url_path="unlike",
+        url_name="unlike",
+        permission_classes=[IsAuthenticated],
+    )
+    def unlike(
+        self,
+        request: HttpRequest,
+        pk: int = None
+    ) -> HttpResponse:
+        user = self.request.user
+        post = self.get_object()
+        if user not in post.likes.all():
+            return Response(
+                data={"message": "You didn't like this post"},
+                status=status.HTTP_200_OK
+            )
+        post.likes.remove(user)
+        return Response(
+            data={
+                "message":
+                    f"You unliked this post '{post.title}' (id={post.id})"
             },
             status=status.HTTP_200_OK
         )
