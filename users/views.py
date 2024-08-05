@@ -331,7 +331,7 @@ class UserViewSet(viewsets.ModelViewSet):
 @extend_schema_view(
     get=extend_schema(
         summary="Retrieve current user",
-        tags=["Users"],
+        tags=["Manage profile"],
         description="Retrieve the details of the current authenticated user.",
         responses={
             200: UserManageSerializer,
@@ -340,7 +340,7 @@ class UserViewSet(viewsets.ModelViewSet):
     put=extend_schema(
         summary="Update current user",
         description="Update the details of the current authenticated user.",
-        tags=["Users"],
+        tags=["Manage profile"],
         responses={
             200: UserUpdateSerializer,
         },
@@ -349,7 +349,7 @@ class UserViewSet(viewsets.ModelViewSet):
         summary="Partially update current user",
         description="Partially update the details of the current "
                     "authenticated user.",
-        tags=["Users"],
+        tags=["Manage profile"],
         responses={
             200: UserUpdateSerializer,
         },
@@ -357,7 +357,7 @@ class UserViewSet(viewsets.ModelViewSet):
     delete=extend_schema(
         summary="Delete current user",
         description="Delete the current authenticated user.",
-        tags=["Users"],
+        tags=["Manage profile"],
         responses={
             204: OpenApiResponse(description="No Content"),
         },
@@ -392,7 +392,7 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
     put=extend_schema(
         summary="Update user password",
         description="Update the password of the current authenticated user.",
-        tags=["Users"],
+        tags=["Manage profile"],
         responses={
             200: OpenApiResponse(description="Password updated successfully"),
         },
