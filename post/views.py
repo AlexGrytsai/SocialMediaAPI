@@ -52,6 +52,9 @@ class PostViewSet(viewsets.ModelViewSet):
                 likes_count=Count("likes")
             )
 
+        if self.action == "retrieve":
+            queryset = queryset.prefetch_related("comments__owner")
+
         return queryset
 
     @action(
