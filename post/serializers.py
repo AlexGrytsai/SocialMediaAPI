@@ -29,6 +29,11 @@ class CommentSerializer(serializers.ModelSerializer):
         post.comments.add(comment)
         return comment
 
+    def update(self, instance: Comment, validated_data: dict) -> Comment:
+        instance.text = validated_data.get("text", instance.text)
+        instance.save()
+        return instance
+
 
 class CommentListSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source="owner")
