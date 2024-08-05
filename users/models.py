@@ -2,10 +2,7 @@ from __future__ import annotations
 
 import os.path
 import uuid
-from datetime import (
-    timedelta,
-    date
-)
+from datetime import timedelta, date
 
 import pycountry
 from django.contrib.auth.base_user import BaseUserManager
@@ -25,7 +22,7 @@ class UserManager(BaseUserManager):
         email: str,
         password: str,
         **extra_fields
-    ) -> "User":
+    ) -> User:
         """Create and save a User with the given email and password."""
         if not email:
             raise ValueError("The given email must be set")
@@ -37,9 +34,7 @@ class UserManager(BaseUserManager):
 
     def create_user(
         self,
-        email: str,
-        password: str = None,
-        **extra_fields
+        email: str, password: str = None, **extra_fields
     ) -> "User":
         """Create and save a regular User with the given email and password."""
         extra_fields.setdefault("is_staff", False)
@@ -47,10 +42,7 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
     def create_superuser(
-        self,
-        email: str,
-        password: str,
-        **extra_fields
+        self, email: str, password: str, **extra_fields
     ) -> "User":
         """Create and save a SuperUser with the given email and password."""
         extra_fields.setdefault("is_staff", True)
@@ -198,17 +190,16 @@ class User(AbstractUser):
                 condition=Q(username__isnull=False),
                 name="unique_username",
                 violation_error_message="A user with that username already "
-                                        "exists.",
+                "exists.",
             ),
             models.CheckConstraint(
-                check=
-                Q(birth_date__isnull=True) |
-                Q(birth_date__lte=date.today() - timedelta(days=365 * 13)) &
-                Q(birth_date__gte=date.today() - timedelta(days=365 * 100)),
+                check=Q(birth_date__isnull=True)
+                | Q(birth_date__lte=date.today() - timedelta(days=365 * 13))
+                & Q(birth_date__gte=date.today() - timedelta(days=365 * 100)),
                 name="check_age",
                 violation_error_message="User must be at least 13 years old "
-                                        "and less than 100 years old.",
-            )
+                "and less than 100 years old.",
+            ),
         ]
 
     def __str__(self):

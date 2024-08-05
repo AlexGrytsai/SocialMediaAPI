@@ -24,7 +24,8 @@ class Migration(migrations.Migration):
         migrations.AddIndex(
             model_name="user",
             index=models.Index(
-                fields=["last_name", "first_name"], name="users_user_last_na_be362d_idx"
+                fields=["last_name", "first_name"],
+                name="users_user_last_na_be362d_idx",
             ),
         ),
     ]

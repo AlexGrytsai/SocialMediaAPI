@@ -19,9 +19,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         default=None,
     )
     photo = serializers.ImageField(
-        required=False,
-        use_url=True,
-        allow_null=True
+        required=False, use_url=True, allow_null=True
     )
 
     class Meta:
@@ -47,28 +45,30 @@ class UserCreateSerializer(serializers.ModelSerializer):
             "username": {
                 "required": False,
                 "style": {
-                    "input_type": "text", "placeholder": "Username (optional)"
+                    "input_type": "text",
+                    "placeholder": "Username (optional)",
                 },
             },
             "first_name": {
                 "required": False,
                 "style": {
                     "input_type": "text",
-                    "placeholder": "First Name (optional)"
-                }
+                    "placeholder": "First Name (optional)",
+                },
             },
             "last_name": {
                 "required": False,
                 "style": {
-                    "input_type": "text", "placeholder": "Last Name (optional)"
-                }
+                    "input_type": "text",
+                    "placeholder": "Last Name (optional)",
+                },
             },
             "birth_date": {
                 "required": False,
                 "style": {
                     "input_type": "date",
-                    "placeholder": "Birth date (optional)"
-                }
+                    "placeholder": "Birth date (optional)",
+                },
             },
         }
 
@@ -107,6 +107,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 class UserListSerializer(serializers.ModelSerializer):
     """User model list serializer."""
+
     residence_place = serializers.StringRelatedField()
     is_following = serializers.BooleanField()
     subscribed = serializers.BooleanField()
@@ -122,7 +123,7 @@ class UserListSerializer(serializers.ModelSerializer):
             "birth_date",
             "residence_place",
             "is_following",
-            "subscribed"
+            "subscribed",
         ]
 
 
@@ -135,6 +136,7 @@ class UserDetailFollowersAndSubscriptionsSerializer(
     This serializer is used to display the followers and subscriptions of
     a user. It includes the user's id, username, and full name.
     """
+
     name = serializers.CharField(source="full_name")
 
     class Meta:
@@ -148,6 +150,7 @@ class UserDetailFollowersAndSubscriptionsSerializer(
 
 class UserManageSerializer(serializers.ModelSerializer):
     """User model serializer for managing a user profile."""
+
     residence_place = serializers.StringRelatedField()
     followers = UserDetailFollowersAndSubscriptionsSerializer(many=True)
     subscriptions = serializers.SerializerMethodField()
@@ -182,6 +185,7 @@ class UserDetailSerializer(UserManageSerializer):
     to display whether the user is following another user and whether the user
     is subscribed to another user.
     """
+
     is_following = serializers.BooleanField()
     subscribed = serializers.BooleanField()
 

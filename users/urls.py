@@ -12,7 +12,7 @@ urlpatterns = [
     path(
         "me/update-password/",
         UserPasswordUpdateView.as_view(),
-        name="update-password"
+        name="update-password",
     ),
 ]
 
