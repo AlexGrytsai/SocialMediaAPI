@@ -207,6 +207,22 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = PostListSerializer(posts, many=True)
         return Response(serializer.data)
 
+    @action(
+        detail=False,
+        methods=["GET"],
+        url_path="licked-posts",
+        url_name="liked-posts",
+        permission_classes=[IsAuthenticated],
+    )
+    def liked_posts(self, request: HttpRequest, pk: int = None) -> Response:
+        user = self.request.user
+        posts = Post.objects.filter(likes=user).annotate(
+                comments_count=Count("comments"),
+                likes_count=Count("likes")
+            )
+        serializer = PostListSerializer(posts, many=True)
+        return Response(serializer.data)
+
 
 class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
     """
