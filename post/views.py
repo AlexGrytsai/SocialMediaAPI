@@ -1,13 +1,26 @@
 from django.db.models import Count
-from django.http import HttpRequest, HttpResponse
-from rest_framework import viewsets, status
+from django.http import (
+    HttpRequest,
+    HttpResponse
+)
+from rest_framework import (
+    viewsets,
+    status
+)
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated
+)
 from rest_framework.response import Response
 
 from post.models import Post
-from post.serializers import PostSerializer, PostListSerializer, \
-    PostDetailSerializer, CommentSerializer
+from post.serializers import (
+    PostSerializer,
+    PostListSerializer,
+    PostDetailSerializer,
+    CommentSerializer
+)
 
 
 class PostViewSet(viewsets.ModelViewSet):

@@ -6,7 +6,11 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 
-from post.models import Post, Hashtag, Comment
+from post.models import (
+    Post,
+    Hashtag,
+    Comment
+)
 
 
 class HashtagSerializer(serializers.ModelSerializer):
