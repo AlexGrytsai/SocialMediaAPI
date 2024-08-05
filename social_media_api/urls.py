@@ -21,6 +21,10 @@ from django.contrib.auth.views import LogoutView
 from django.urls import path
 from debug_toolbar.toolbar import debug_toolbar_urls
 from django.urls.conf import include
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularSwaggerView
+)
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -45,6 +49,12 @@ urlpatterns = [
     path("api/v1/token/logout/", LogoutView.as_view(), name="token_logout"),
     path("api/v1/users/", include("users.urls")),
     path("api/v1/posts/", include("post.urls")),
+    path("api/v1/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path(
+        "api/v1/doc/swagger/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui"
+    )
 ] + debug_toolbar_urls() + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 )
