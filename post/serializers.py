@@ -157,6 +157,10 @@ class PostListSerializer(serializers.ModelSerializer):
 class PostDetailSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source="owner")
     comments = CommentListSerializer(many=True, read_only=True)
+    likes_count = serializers.IntegerField()
+    who_liked = serializers.StringRelatedField(
+        source="likes", many=True, read_only=True
+    )
 
     class Meta:
         model = Post
@@ -168,5 +172,7 @@ class PostDetailSerializer(serializers.ModelSerializer):
             "image",
             "created_date",
             "hashtags",
+            "likes_count",
             "comments",
+            "who_liked"
         ]
