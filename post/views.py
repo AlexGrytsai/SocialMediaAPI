@@ -12,6 +12,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from post.models import Post
+from post.permissions import IsOwnerOrReadOnly
 from post.serializers import (
     PostSerializer,
     PostListSerializer,
@@ -108,6 +109,8 @@ class PostViewSet(viewsets.ModelViewSet):
             return (IsAuthenticated(),)
         if self.request.method == "GET":
             return (AllowAny(),)
+        if self.action in ("create", "update", "partial_update", "destroy"):
+            return (IsOwnerOrReadOnly(),)
         return (IsAuthenticated(),)
 
     def get_serializer_class(self):
