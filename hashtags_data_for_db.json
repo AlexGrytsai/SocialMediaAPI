@@ -1,0 +1,352 @@
+[
+    {
+        "model": "post.hashtag",
+        "pk": "love",
+        "fields": {
+            "tag": "love"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "instagood",
+        "fields": {
+            "tag": "instagood"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "photooftheday",
+        "fields": {
+            "tag": "photooftheday"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "fashion",
+        "fields": {
+            "tag": "fashion"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "beautiful",
+        "fields": {
+            "tag": "beautiful"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "happy",
+        "fields": {
+            "tag": "happy"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "cute",
+        "fields": {
+            "tag": "cute"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "tbt",
+        "fields": {
+            "tag": "tbt"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "like4like",
+        "fields": {
+            "tag": "like4like"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "followme",
+        "fields": {
+            "tag": "followme"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "picoftheday",
+        "fields": {
+            "tag": "picoftheday"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "follow",
+        "fields": {
+            "tag": "follow"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "me",
+        "fields": {
+            "tag": "me"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "selfie",
+        "fields": {
+            "tag": "selfie"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "summer",
+        "fields": {
+            "tag": "summer"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "art",
+        "fields": {
+            "tag": "art"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "instadaily",
+        "fields": {
+            "tag": "instadaily"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "friends",
+        "fields": {
+            "tag": "friends"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "repost",
+        "fields": {
+            "tag": "repost"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "nature",
+        "fields": {
+            "tag": "nature"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "smile",
+        "fields": {
+            "tag": "smile"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "style",
+        "fields": {
+            "tag": "style"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "food",
+        "fields": {
+            "tag": "food"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "family",
+        "fields": {
+            "tag": "family"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "travel",
+        "fields": {
+            "tag": "travel"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "fitness",
+        "fields": {
+            "tag": "fitness"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "igers",
+        "fields": {
+            "tag": "igers"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "fun",
+        "fields": {
+            "tag": "fun"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "tagsforlikes",
+        "fields": {
+            "tag": "tagsforlikes"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "instalike",
+        "fields": {
+            "tag": "instalike"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "likeforlike",
+        "fields": {
+            "tag": "likeforlike"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "ootd",
+        "fields": {
+            "tag": "ootd"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "beauty",
+        "fields": {
+            "tag": "beauty"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "amazing",
+        "fields": {
+            "tag": "amazing"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "instamood",
+        "fields": {
+            "tag": "instamood"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "instagram",
+        "fields": {
+            "tag": "instagram"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "photography",
+        "fields": {
+            "tag": "photography"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "vscocam",
+        "fields": {
+            "tag": "vscocam"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "sun",
+        "fields": {
+            "tag": "sun"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "photo",
+        "fields": {
+            "tag": "photo"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "music",
+        "fields": {
+            "tag": "music"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "party",
+        "fields": {
+            "tag": "party"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "girls",
+        "fields": {
+            "tag": "girls"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "cool",
+        "fields": {
+            "tag": "cool"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "bestoftheday",
+        "fields": {
+            "tag": "bestoftheday"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "swag",
+        "fields": {
+            "tag": "swag"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "fitnessmotivation",
+        "fields": {
+            "tag": "fitnessmotivation"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "motivation",
+        "fields": {
+            "tag": "motivation"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "healthy",
+        "fields": {
+            "tag": "healthy"
+        }
+    },
+    {
+        "model": "post.hashtag",
+        "pk": "gym",
+        "fields": {
+            "tag": "gym"
+        }
+    }
+]
