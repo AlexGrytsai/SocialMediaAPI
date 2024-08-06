@@ -24,7 +24,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - cinema_data:$PGDATA
+      - social_data:$PGDATA
 
 volumes:
   social_data:

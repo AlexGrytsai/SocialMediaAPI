@@ -15,10 +15,10 @@ RUN mkdir -p /files/mediafiles
 RUN adduser \
     --disabled-password \
     --no-create-home \
-    user
+    st_user
 
-RUN chown -R maine_us:user /files
+RUN chown -R st_user:st_user /files
 RUN chmod -R 777 /files
 
 
-USER user
+USER st_user
