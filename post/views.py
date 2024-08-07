@@ -109,7 +109,7 @@ class PostViewSet(viewsets.ModelViewSet):
             return (IsAuthenticated(),)
         if self.request.method == "GET":
             return (AllowAny(),)
-        if self.action in ("create", "update", "partial_update", "destroy"):
+        if self.action in ("update", "partial_update", "destroy"):
             return (IsOwnerOrReadOnly(),)
         return (IsAuthenticated(),)
 
