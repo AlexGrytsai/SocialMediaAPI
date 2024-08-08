@@ -73,6 +73,11 @@ class Post(models.Model):
     created_date = models.DateField(
         auto_now_add=True, db_comment="The date when the post was created"
     )
+    scheduled_date = models.DateTimeField(
+        null=True,
+        blank=True,
+        db_comment="The date and time when the post is scheduled to be created"
+    )
     owner = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="posts"
     )
