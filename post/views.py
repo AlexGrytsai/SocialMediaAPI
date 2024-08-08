@@ -41,6 +41,12 @@ from post.serializers import (
                 required=False,
                 type=str,
             ),
+            OpenApiParameter(
+                name="title",
+                description="Filter by title",
+                required=False,
+                type=str,
+            ),
         ],
     ),
     retrieve=extend_schema(
