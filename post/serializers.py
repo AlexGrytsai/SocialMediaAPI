@@ -11,6 +11,7 @@ from post.models import (
     Hashtag,
     Comment
 )
+from post.tasks import create_scheduled_post
 
 
 class HashtagSerializer(serializers.ModelSerializer):
@@ -79,6 +80,7 @@ class PostSerializer(serializers.ModelSerializer):
             "image",
             "hashtags",
             "add_new_hashtags",
+            "scheduled_date"
         ]
 
         kwargs = {
@@ -88,37 +90,66 @@ class PostSerializer(serializers.ModelSerializer):
         }
 
     def to_internal_value(self, data: dict) -> dict:
-        if "image" in data and data["image"] == "":
-            data["image"] = None
+        mutable_data = data.copy()
+        if "image" in mutable_data and mutable_data["image"] == "":
+            mutable_data["image"] = None
         if (
-            "image" in data
-            and isinstance(data["image"], str)
-            and data["image"].startswith("http")
+            "image" in mutable_data
+            and isinstance(mutable_data["image"], str)
+            and mutable_data["image"].startswith("http")
         ):
             try:
                 response = urlopen(data["image"])
                 file_name = os.path.basename(data["image"])
-                data["image"] = ContentFile(response.read(), name=file_name)
+                mutable_data["image"] = ContentFile(
+                    response.read(), name=file_name
+                )
             except Exception:
                 raise serializers.ValidationError(
                     {"image": "Error downloading image."}
                 )
-        return super().to_internal_value(data)
+        return super().to_internal_value(mutable_data)
 
     def create(self, validated_data: dict) -> Post:
         user = self.context["request"].user
-        with transaction.atomic():
-            add_hashtag = validated_data.pop("add_new_hashtags", [])
-            hashtags = validated_data.pop("hashtags", [])
-            post = Post.objects.create(**validated_data, owner=user)
-            if add_hashtag:
-                for hashtag in add_hashtag:
-                    tag, _ = Hashtag.objects.get_or_create(tag=hashtag["tag"])
-                    post.hashtags.add(tag)
-            if hashtags:
-                for hashtag in hashtags:
-                    post.hashtags.add(hashtag)
-            return post
+        add_hashtag = validated_data.pop("add_new_hashtags", [])
+        hashtags = validated_data.pop("hashtags", [])
+        scheduled_date = validated_data.pop("scheduled_date", None)
+        if scheduled_date:
+            print(f"scheduled date: {scheduled_date}")
+            hashtag_tags = [hashtag.tag for hashtag in hashtags]
+            create_scheduled_post.apply_async(
+                kwargs={
+                    "title": validated_data["title"],
+                    "text": validated_data["text"],
+                    "image": validated_data["image"],
+                    "owner_id": user.id,
+                    "hashtags": hashtag_tags,
+                    "add_hashtag": add_hashtag
+                },
+                eta=scheduled_date,
+            )
+            placeholder_post = Post(
+                title=validated_data["title"],
+                text=validated_data["text"],
+                owner=user,
+                image=validated_data.get("image"),
+                scheduled_date=scheduled_date
+            )
+            placeholder_post.id = None
+            return placeholder_post
+        else:
+            with transaction.atomic():
+                post = Post.objects.create(**validated_data, owner=user)
+                if add_hashtag:
+                    for hashtag in add_hashtag:
+                        tag, _ = Hashtag.objects.get_or_create(
+                            tag=hashtag["tag"])
+                        post.hashtags.add(tag)
+                if hashtags:
+                    for hashtag in hashtags:
+                        post.hashtags.add(hashtag)
+                return post
 
     def update(self, instance: Post, validated_data: dict) -> Post:
         with transaction.atomic():
