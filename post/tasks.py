@@ -1,7 +1,7 @@
 import logging
 
 from celery import shared_task
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db import transaction
 
 from post.models import Post, Hashtag
@@ -20,8 +20,10 @@ def create_scheduled_post(
 ) -> None:
     try:
         with transaction.atomic():
-            logger.info("Creating scheduled post with title: %s", title)
-            owner = User.objects.get(id=owner_id)
+            logger.info(
+                "Creating scheduled post with title: %s", title
+            )
+            owner = get_user_model().objects.get(id=owner_id)
             post = Post.objects.create(
                 title=title, text=text, image=image, owner=owner
             )
