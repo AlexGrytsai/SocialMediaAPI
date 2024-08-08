@@ -29,21 +29,22 @@ services:
 
   redis:
     image: redis:latest
-    restart: always
+    restart: on-failure
+    env_file:
+      - .env
     ports:
       - "6379:6379"
 
   celery:
     build:
       context: .
-    command: celery -A social_media_api_worker worker --loglevel=INFO"
+    command: celery -A social_media_api worker --loglevel=INFO
     restart: on-failure
     env_file:
       - .env
     depends_on:
       - redis
       - app
-      - db
 
   flower:
     build:
@@ -51,7 +52,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5555:5555"
-    command: celery -A social_media_api_worker flower --address=0.0.0.0
+    command: celery -A social_media_api flower --address=0.0.0.0
     restart: on-failure
     env_file:
       - .env
