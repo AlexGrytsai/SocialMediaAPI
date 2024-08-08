@@ -32,6 +32,16 @@ services:
     ports:
       - "6379:6379"
 
+  celery:
+    build:
+      context: .
+    command: celery -A social_media_api_worker worker --loglevel=INFO
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - app
+
 volumes:
   social_data:
   social_media:
