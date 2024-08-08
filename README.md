@@ -10,7 +10,8 @@ This project is a Django REST Framework-based API for managing users and posts. 
 **User Management**: 
  - Custom User model using email as the username. 
  - User registration, profile update, and password change. 
- - Follow and unfollow other users. - View posts by users they follow. 
+ - Follow and unfollow other users. 
+ - View posts by users they follow. 
  - Custom image upload path for user photos. 
 
 **Post Management**: 
@@ -18,7 +19,7 @@ This project is a Django REST Framework-based API for managing users and posts. 
  - Add comments to posts. 
  - Like and unlike posts.
  - Filter posts by hashtags and author.
- - Custom image upload path for post images.
+ - Custom image upload path for posts images.
 
 **JSON Web Tokens**: JSON Web Tokens are used to authenticate users. 
 
