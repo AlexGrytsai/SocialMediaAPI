@@ -130,6 +130,7 @@ class PostViewSet(viewsets.ModelViewSet):
         queryset = super(PostViewSet, self).get_queryset()
         hashtags = self.request.query_params.get("hashtag")
         author = self.request.query_params.get("author")
+        title = self.request.query_params.get("title")
 
         if hashtags:
             queryset = queryset.filter(
@@ -142,6 +143,9 @@ class PostViewSet(viewsets.ModelViewSet):
             queryset = queryset.annotate(
                 comments_count=Count("comments"), likes_count=Count("likes")
             )
+
+        if title:
+            queryset = queryset.filter(title__icontains=title)
 
         if self.action == "retrieve":
             queryset = queryset.prefetch_related(
