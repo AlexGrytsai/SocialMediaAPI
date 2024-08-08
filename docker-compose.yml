@@ -26,6 +26,12 @@ services:
     volumes:
       - social_data:$PGDATA
 
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+
 volumes:
   social_data:
   social_media:
