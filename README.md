@@ -23,6 +23,8 @@ This project is a Django REST Framework-based API for managing users and posts. 
 
 **JSON Web Tokens**: JSON Web Tokens are used to authenticate users. 
 
+**Asynchronous Tasks with Celery and Flower**: The API includes a feature to schedule posts using Celery.
+
 ## Project Structure
 
 - **UserManager**: Custom manager for the User model.
@@ -81,6 +83,7 @@ This project is a Django REST Framework-based API for managing users and posts. 
 	You need to get access token for use app - [get token](http://127.0.0.1:8000/api/v1/token/).
 	For use an access token, you can use [ModHeader - Modify HTTP headers](https://chromewebstore.google.com/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj?pli=1) for Chrome. After installing it, you need added Authorization with "Bearer <your_access_token>".
 	Now, you can use all application's feathers.
+	Use Flower to monitor the status of scheduled tasks and other Celery workers - [http://localhost:5555](http://localhost:5555).
 	
 7. **Access the application's documentation:**
     
