@@ -394,6 +394,33 @@ def save_users_data_to_json(users: list, file_name: str) -> None:
         json.dump(users, file, indent=4)
 
 
+def open_json_file(file_name: str) -> list:
+    """
+    Open a JSON file and return its contents as a list of dictionaries.
+    """
+    with open(file_name, "r") as file:
+        data = json.load(file)
+    return data
+
+
+def combine_all_data() -> list:
+    """
+    Combine all data into a single list.
+    """
+    countrys_data = open_json_file("country_db_data.json")
+    users_data = open_json_file("users_data_for_db.json")
+
+    users_data = countrys_data + users_data
+    save_users_data_to_json(users_data, "users_data_for_db")
+
+    hashtags_data = open_json_file("hashtags_data_for_db.json")
+    comments_data = open_json_file("comments_data_for_db.json")
+    posts_data = open_json_file("posts_data_for_db.json")
+
+    posts_data = hashtags_data + comments_data + posts_data
+    save_users_data_to_json(posts_data, "posts_data_for_db")
+
+
 if __name__ == "__main__":
     users_data = generate_users_for_db()
     save_users_data_to_json(users_data, "users_data_for_db")
@@ -406,3 +433,5 @@ if __name__ == "__main__":
 
     post_data = generate_posts_for_db()
     save_users_data_to_json(post_data, "posts_data_for_db")
+
+    combine_all_data()
