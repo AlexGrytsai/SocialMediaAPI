@@ -34,6 +34,10 @@ services:
       - .env
     ports:
       - "6379:6379"
+    volumes:
+      - $REDISDATA
+      - redis_data:/data
+    command: redis-server /usr/local/etc/redis/redis.conf
 
   celery:
     build:
@@ -62,3 +66,4 @@ services:
 volumes:
   social_data:
   social_media:
+  redis_data:
