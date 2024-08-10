@@ -62,11 +62,8 @@ This project is a Django REST Framework-based API for managing users and posts. 
 	Open a new terminal and enter the command:
 	```sh
     docker exec -it social_media_api-app-1 /bin/sh
-    python manage.py loaddata country_db_data.json
-    python manage.py loaddata users_data_for_db.json
-    python manage.py loaddata hashtags_data_for_db.json
-    python manage.py loaddata comments_data_for_db.json
-    python manage.py loaddata posts_data_for_db.json
+    python manage.py users_data_for_db.json
+    python manage.py posts_data_for_db.json
     ```
 5. **Create a superuser:**
 	```sh
